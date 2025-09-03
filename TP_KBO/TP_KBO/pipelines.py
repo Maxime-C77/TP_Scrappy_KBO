@@ -5,9 +5,28 @@
 
 
 # useful for handling different item types with a single interface
-from itemadapter import ItemAdapter
+# from itemadapter import ItemAdapter
 
 
-class TpKboPipeline:
+# class TpKboPipeline:
+#     def process_item(self, item, spider):
+#         return item
+
+import pymongo
+
+class MongoDBPipeline:
+    def open_spider(self, spider):
+        self.client = pymongo.MongoClient("mongodb+srv://mcordier:BHk9Zz8k9DsxHR3Q@cluster0.8uuayyf.mongodb.net/")
+        self.db = self.client["kbo_db"]
+
+    def close_spider(self, spider):
+        self.client.close()
+
     def process_item(self, item, spider):
+        collection = self.db[spider.name]  # chaque spider a sa collection
+        collection.update_one(
+            {"_id": item.get("_id", item.get("numero"))},  # clé unique
+            {"$set": dict(item)},
+            upsert=True
+        )
         return item
