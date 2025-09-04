@@ -3,8 +3,13 @@ import csv
 import random
 import re
 import unidecode
+import os
+from dotenv import load_dotenv
 
 from TP_KBO.items import KboItem
+
+# Charger les variables du .env
+load_dotenv()
 
 def normalize(label: str) -> str:
     """Nettoie les labels pour MongoDB (minuscules, sans accents, espaces -> _)"""
@@ -12,22 +17,33 @@ def normalize(label: str) -> str:
     label = re.sub(r"[^a-z0-9]+", "_", label.lower())
     return label.strip("_")
 
+
 class KboSpider(scrapy.Spider):
     name = "kbo_spider"
 
+    # Variables depuis le .env
+    CSV_PATH = os.getenv("CSV_PATH", "../KBO")
+    CRAWL_LIMIT = int(os.getenv("CRAWL_LIMIT", 10))
+    KBO_LANG = os.getenv("KBO_LANG", "fr")
+    USER_AGENT = os.getenv(
+        "USER_AGENT",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36"
+    )
+
     def start_requests(self):
-        with open("../KBO/enterprise.csv", newline="", encoding="utf-8") as f:
+        csv_file = os.path.join(self.CSV_PATH, "enterprise.csv")
+        with open(csv_file, newline="", encoding="utf-8") as f:
             reader = list(csv.DictReader(f))
-            sample = random.sample(reader, min(10, len(reader)))
+            sample = random.sample(reader, min(self.CRAWL_LIMIT, len(reader)))
 
             for row in sample:
                 numero = row["EnterpriseNumber"].replace(".", "")
-                url = f"https://kbopub.economie.fgov.be/kbopub/toonondernemingps.html?lang=fr&ondernemingsnummer={numero}"
+                url = f"https://kbopub.economie.fgov.be/kbopub/toonondernemingps.html?lang={self.KBO_LANG}&ondernemingsnummer={numero}"
                 yield scrapy.Request(
                     url,
                     callback=self.parse,
                     meta={"numero": numero},
-                    headers={"Accept-Language": "fr"}
+                    headers={"Accept-Language": self.KBO_LANG, "User-Agent": self.USER_AGENT}
                 )
 
     def parse(self, response):
@@ -81,5 +97,4 @@ class KboSpider(scrapy.Spider):
         item["sections"] = sections
 
         item.clean_item()
-
         yield item

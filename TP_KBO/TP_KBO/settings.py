@@ -85,3 +85,16 @@ ITEM_PIPELINES = {
 
 # Set settings whose default value is deprecated to a future-proof value
 FEED_EXPORT_ENCODING = "utf-8"
+
+
+import os
+from dotenv import load_dotenv
+
+load_dotenv()  # charge les variables du fichier .env
+
+MONGO_URI = os.getenv("MONGO_URI")
+MONGO_DB = os.getenv("MONGO_DB")
+CSV_PATH = os.getenv("CSV_PATH")
+CRAWL_LIMIT = int(os.getenv("CRAWL_LIMIT", 10))
+KBO_LANG = os.getenv("KBO_LANG", "fr")
+USER_AGENT = os.getenv("USER_AGENT")
