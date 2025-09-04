@@ -28,4 +28,23 @@ class KboSpider(scrapy.Spider):
             "_id": numero,
             "numero": numero,
             "donnees": response.css("td.QL::text, td.RL::text").getall(),
+
+
+            # "statut": response.css("td span:nth-child(1)::text").getall(),
+            # "situation juridique": response.css("td span:nth-child(2)::text").getall(),
+            # "date de debut": response.css("td span:nth-child(3)::text").getall(),
+            # # "denomination": response.css("td.QL::text, td.RL::text").getall(),
+            # # "adresse": response.css("td.QL::text, td.RL::text").getall(),
+            # # "telephone": response.css("td.QL::text, td.RL::text").getall(),
+            # # "fax": response.css("td.QL::text, td.RL::text").getall(),
+            # # "mail": response.css("td.QL::text, td.RL::text").getall(),
+            # # "web": response.css("td.QL::text, td.RL::text").getall(),
+            # # "type d'entite": response.css("td.QL::text, td.RL::text").getall(),
+            # # "forme d'entite": response.css("td.QL::text, td.RL::text").getall(),
+            # # "nombre d'unite d'etablissement (UE)": response.css("td.QL::text, td.RL::text").getall(),
+            
+            # "donnees": response.css("td.QL::text, td.RL::text").getall(),
+            # "donnees": response.css("td.QL::text, td.RL::text").getall(),
+            # "donnees": response.css("td.QL::text, td.RL::text").getall(),
+            # "donnees": response.css("td.QL::text, td.RL::text").getall(),
         }
