@@ -16,7 +16,7 @@ import pymongo
 
 class MongoDBPipeline:
     def open_spider(self, spider):
-        self.client = pymongo.MongoClient("mongodb+srv://mcordier:BHk9Zz8k9DsxHR3Q@cluster0.8uuayyf.mongodb.net/")
+        self.client = pymongo.MongoClient("mongodb+srv://maxime:BzfgER0W7fgsdaQZ@tp.5rrgnek.mongodb.net/")
         self.db = self.client["kbo_db"]
 
     def close_spider(self, spider):

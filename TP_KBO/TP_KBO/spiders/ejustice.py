@@ -1,16 +1,25 @@
 import scrapy
 import csv
+import random
 
 class EjusticeSpider(scrapy.Spider):
     name = "ejustice"
 
     def start_requests(self):
         with open("../KBO/enterprise.csv", newline="", encoding="utf-8") as f:
-            reader = csv.DictReader(f)
-            for row in reader:
-                numero = row["numero"]
+            reader = list(csv.DictReader(f))
+
+            sample = random.sample(reader, min(10, len(reader)))
+
+            for row in sample:
+                numero = row["EnterpriseNumber"].replace(".", "")
                 url = f"https://www.ejustice.just.fgov.be/cgi_tsv/list.pl?btw={numero}"
-                yield scrapy.Request(url, callback=self.parse, meta={"numero": numero})
+                yield scrapy.Request(
+                    url,
+                    callback=self.parse,
+                    meta={"numero": numero},
+                    headers={"Accept-Language": "fr"}
+                )
 
     def parse(self, response):
         numero = response.meta["numero"]
